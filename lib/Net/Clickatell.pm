@@ -30,7 +30,7 @@ use HTTP::Request::Common;
 
 # April 2007. Singapore.
 
-$Net::Clickatell::VERSION=0.1;
+$Net::Clickatell::VERSION=0.2;
 
 =head1 NAME
 
@@ -48,22 +48,22 @@ Net::Clickatell - Access to Clickatell HTTP API
 
   Additional Commands
 
-
   http://api.clickatell.com/http/delmsg			No
   http://api.clickatell.com/http/getbalance		Yes
   http://api.clickatell.com/http/routeCoverage.php	Yes
   http://api.clickatell.com/mms/ind_push.php		Yes
   http://api.clickatell.com/mms/si_push.php		Yes
   http://api.clickatell.com/http/getmsgcharge		Yes
+  http://api.clickatell.com/http/token_pay              No
 
-  http://api.clickatell.com/http/token_pay		No
+  Batch Messaging
+
   http://api.clickatell.com/http_batch/startbatch	No
   http://api.clickatell.com/http_batch/senditem		No
   http://api.clickatell.com/http_batch/quicksend	No
   http://api.clickatell.com/http_batch/endbatch		No
 
 
-  http://api.clickatell.com/http/token_pay		No
 
 
 =head1 SYNOPSIS
@@ -205,7 +205,7 @@ sub new {
    } else {
       # Set BaseURL property value.
       # Check if we have to use SSL.
-      if (exists $args{UseSSL}) {
+      if (exists $args{UseSSL} && $args{UseSSL}==1) {
          $args{BaseURL} = 'https://'.$args{BaseURL};
       } else {
          $args{BaseURL} = 'http://'.$args{BaseURL};
@@ -376,7 +376,7 @@ This method is used to send a MMS Notification Push Message.
 
 Usage:
 
-  my $mmsResult=$clickatell->sendMMNotification($from,$to,$tranid,$expiry,$url);
+  my $mmsResult=$clickatell->sendMMNotification($from,$to,$subject,$expiry,$url);
 
 Succesful example of the return is as followed:
  OK: ID: dd8f5556c0d3d54bc94a4cd8800f01b4
@@ -390,18 +390,18 @@ sub sendMMNotification {
    my $class = shift || undef;
    return undef if( !defined $class);
 
-   my ($from,$to,$tranid,$expiry,$url)=@_;
+   my ($from,$to,$subject,$expiry,$url)=@_;
 
    # mms_subject: subject
    # mms_class: class (e.g. 80,81,82,83)
    # mms_expire: seconds - different to the standard expire parameter
    # mms_from: from text
    # mms_url: the url with the mms content. The URL must be urlencoded.
-   # print "($from,$to,$tranid,$expiry,$url)\n";
+   # print "($from,$to,$subject,$expiry,$url)\n";
 
    my $loc=uri_escape($url);
    my $ret=  $class->connect('mms/ind_push.php',"to",$to,'from',$from,'mms_from',$from,
-      'mms_expire',$expiry,'mms_url',$loc,'mms_class','80','mms_subject','MMS');
+      'mms_expire',$expiry,'mms_url',$loc,'mms_class','80','mms_subject',$subject);
    return "OK: $ret" unless $ret=~/^ERR: /;
    return $ret;
 
@@ -451,6 +451,14 @@ sub sendSIWAPPush {
       'to',$to,'from',$from,'si_text',$message,'si_url',$loc);
    return "OK: $ret" unless $ret=~/^ERR: /;
    return $ret;
+}
+
+sub getTime {
+   my $day=shift;
+   $day=0 unless ($day);
+
+   my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime(time+($day*86400));
+   return sprintf("%04d%02d%02d%02d%02d%02d",$year+1900,$mon+1,$mday,$hour,$min,$sec);
 }
 
 

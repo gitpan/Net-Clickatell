@@ -3,7 +3,7 @@ NAME
 
 This is the README file for Net::SMS::Clickatell module.
 
-This module provides access to Clickattel SMS messaging service.
+This module provides access to Clickatell SMS messaging service.
 
 This module support the API from Clickatell's HTTP API Specification v.2.2.7.
 The following is all the available API and not all are supported
@@ -23,15 +23,14 @@ The following is all the available API and not all are supported
          http://api.clickatell.com/mms/ind_push.php            Yes
          http://api.clickatell.com/mms/si_push.php             Yes
          http://api.clickatell.com/http/getmsgcharge           Yes
-
          http://api.clickatell.com/http/token_pay              No
+
+         Batch Messaging
+
          http://api.clickatell.com/http_batch/startbatch       No
          http://api.clickatell.com/http_batch/senditem         No
          http://api.clickatell.com/http_batch/quicksend        No
          http://api.clickatell.com/http_batch/endbatch         No
-
-         http://api.clickatell.com/http/token_pay              No
-
 
 
 I tested this module on perl  v5.8.5.
@@ -137,7 +136,7 @@ METHODS
 
 	    Usage:
 
-	      my $mmsResult=$clickatell->sendMMNotification($from,$to,$tranid,$expiry,$url);
+	      my $mmsResult=$clickatell->sendMMNotification($from,$to,$subject,$expiry,$url);
 
 	    Succesful example of the return is as followed:
 	     OK: ID: dd8f5556c0d3d54bc94a4cd8800f01b4
