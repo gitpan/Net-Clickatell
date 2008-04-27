@@ -30,7 +30,7 @@ use HTTP::Request::Common;
 
 # April 2007. Singapore.
 
-$Net::Clickatell::VERSION=0.2;
+$Net::Clickatell::VERSION=0.2.1;
 
 =head1 NAME
 
@@ -197,7 +197,7 @@ sub new {
   if (!exists $args{BaseURL}) {
       # BaseURL argument wasn't passed. Set it to default.
       # Check if we have to use SSL.
-      if (exists $args{UseSSL}) {
+      if (exists $args{UseSSL} && $args{UseSSL}==1) {
          $args{BaseURL} = 'https://api.clickatell.com/';
       } else {
          $args{BaseURL} = 'http://api.clickatell.com/';
