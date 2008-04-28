@@ -30,7 +30,7 @@ use HTTP::Request::Common;
 
 # April 2007. Singapore.
 
-$Net::Clickatell::VERSION=0.2.1;
+$Net::Clickatell::VERSION=0.3;
 
 =head1 NAME
 
