@@ -131,6 +131,38 @@ METHODS
 	    Failed example of the return is as followed:
 	     ERR: 105, Invalid Destination Address
 
+       sendAdvanceSMSMessage
+           This method is used to send a customised SMS Message. The following are the accepted parameter format:
+             to
+             text
+             from
+             callback
+             deliv_time
+             concat
+             max_credits
+             req_feat
+             queue
+             escalate
+             mo
+             cliMsgId
+             Unicode
+             msg_type
+             udh
+             data
+             validity
+             binary
+             schedule_time
+
+           Usage:
+
+             my $smsResult=$clickatell->sendAdvanceSMSMessage(to=>'6591234567',from=>'6591234568',text=>'testing');
+
+           Succesful example of the return is as followed:
+            OK: ID: dd8f5556c0d3d54bc94a4cd8800f01b4
+
+           Failed example of the return is as followed:
+            ERR: 105, Invalid Destination Address
+
 	sendMMNotification
 	    This method is used to send a MMS Notification Push Message.
 
@@ -161,11 +193,11 @@ AUTHOR
 	Christopherus Goo <software@artofmobile.com>
 
 COPYRIGHT
-	Copyright (c) 2007 Christopherus Goo.  All rights reserved.  This software may be used and modified freely, but I do request that this copyright notice remain
+	Copyright (c) 2010 Christopherus Goo.  All rights reserved.  This software may be used and modified freely, but I do request that this copyright notice remain
 	attached to the file.  You may modify this module as you wish, but if you redistribute a modified version, please attach a note listing the modifications you
 	have made.
 
-	Clickatell is Copyright (c) 2006 Clickatell (Pty) Ltd: Bulk SMS Gateway
+	Clickatell is Copyright (c) 2010 Clickatell (Pty) Ltd: Bulk SMS Gateway
 
 	This software or the author aren't related to Clickatell in any way.
 

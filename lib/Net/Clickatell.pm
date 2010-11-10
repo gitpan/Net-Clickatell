@@ -15,7 +15,7 @@ use HTTP::Request::Common;
 # documentation in manual or html file format (these utilities are part of the
 # Perl 5 distribution).
 
-# Copyright (c) 2007 Christopherus Goo.  All rights reserved.
+# Copyright (c) 2010 Christopherus Goo.  All rights reserved.
 # It may be used and modified freely, but I do request that this copyright
 # notice remain attached to the file.  You may modify this module as you
 # wish, but if you redistribute a modified version, please attach a note
@@ -24,19 +24,19 @@ use HTTP::Request::Common;
 # The most recent version and complete docs are available at:
 #   http://www.artofmobile.com/software/
 
-# Clickatell is Copyright (c) 2006 Clickatell (Pty) Ltd: Bulk SMS Gateway
+# Clickatell is Copyright (c) 2010 Clickatell (Pty) Ltd: Bulk SMS Gateway
 
 #This software or the author aren't related to Clickatell in any way.
 
-# April 2007. Singapore.
+# November 2010. Singapore.
 
-$Net::Clickatell::VERSION=0.3;
+$Net::Clickatell::VERSION=0.5;
 
 =head1 NAME
 
 Net::Clickatell - Access to Clickatell HTTP API
 
-  This module support the API from Clickatell's HTTP API Specification v.2.2.7.
+  This module support the API from Clickatell's HTTP API Specification v.2.4.1.
   The following is all the available API and not all are supported
 
   Basic Commands
@@ -350,7 +350,7 @@ This method is used to send a text SMS Message.
 
 Usage:
 
-  my $smsResult=$clickatell->sendBaicSMSMessage($from,$to,$msg);
+  my $smsResult=$clickatell->sendBasicSMSMessage($from,$to,$msg);
 
 Succesful example of the return is as followed:
  OK: ID: dd8f5556c0d3d54bc94a4cd8800f01b4
@@ -366,6 +366,73 @@ sub sendBasicSMSMessage {
 
    my ($from,$to,$msg)=@_;
    my $ret= $class->connect('http/sendmsg',"to",$to,'from',$from,'text',$msg);
+   return "OK: $ret" unless $ret=~/^ERR: /;
+   return $ret;
+}
+
+=item sendAdvanceSMSMessage
+
+This method is used to send a customised SMS Message. The following are the accepted parameter format:
+  to
+  text
+  from
+  callback
+  deliv_time
+  concat
+  max_credits
+  req_feat
+  queue
+  escalate
+  mo
+  cliMsgId
+  Unicode
+  msg_type
+  udh
+  data
+  validity
+  binary
+  schedule_time
+
+Usage:
+
+  my $smsResult=$clickatell->sendAdvanceSMSMessage(to=>'6591234567',from=>'6591234568',text=>'testing');
+
+Succesful example of the return is as followed:
+ OK: ID: dd8f5556c0d3d54bc94a4cd8800f01b4
+
+Failed example of the return is as followed:
+ ERR: 105, Invalid Destination Address
+
+=cut
+
+sub sendAdvanceSMSMessage {
+   my $class = shift || undef;
+   return undef if( !defined $class);
+   # Get arguments
+   my %args = @_;
+
+   # Check arguments
+   if (!exists $args{to}) {
+      return "ERR: To field not found";
+   } else {
+      if (ref($args{to})) {
+         return "ERR: To field must be arrayref" unless ref($args{to}) eq "ARRAY";
+         my $tos=$args{to};
+         return "ERR: To field must be contain at least 1 number" unless (@$tos);
+         $args{to}=join ',',@$tos;
+print $args{to}."\n";
+      }
+   }
+
+   if (!exists $args{from}) {
+      return "ERR: From field not found";
+   }
+
+   if (!exists $args{text} && !exists $args{data}){
+      return "ERR: Text field not found";
+   }
+
+   my $ret= $class->connect('http/sendmsg',%args);
    return "OK: $ret" unless $ret=~/^ERR: /;
    return $ret;
 }
@@ -444,10 +511,12 @@ sub sendSIWAPPush {
    #si_created: date in UTC
    #si_expires: data in UTC
    #si_action: one of (signal-none, signal-low, signal-medium, signal-high, delete)
+   my $nowt=&getTime(0);
+   my $nowx=&getTime(7);
 
    my $loc=uri_escape($url);
    my $ret= $class->connect('mms/si_push','si_id',$si_id,'si_action',$si_action,
-      'si_created',&getTime,'si_expires',&getTime(7),
+      'si_created',$nowt,'si_expires',$nowx,
       'to',$to,'from',$from,'si_text',$message,'si_url',$loc);
    return "OK: $ret" unless $ret=~/^ERR: /;
    return $ret;
@@ -470,13 +539,13 @@ Christopherus Goo <software@artofmobile.com>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2007 Christopherus Goo.  All rights reserved.
+Copyright (c) 2010 Christopherus Goo.  All rights reserved.
 This software may be used and modified freely, but I do request that this
 copyright notice remain attached to the file.  You may modify this module
 as you wish, but if you redistribute a modified version, please attach a
 note listing the modifications you have made.
 
-Clickatell is Copyright (c) 2006 Clickatell (Pty) Ltd: Bulk SMS Gateway
+Clickatell is Copyright (c) 2010 Clickatell (Pty) Ltd: Bulk SMS Gateway
 
 This software or the author aren't related to Clickatell in any way.
 
